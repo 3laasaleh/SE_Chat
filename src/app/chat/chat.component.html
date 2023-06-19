@@ -1,0 +1,19 @@
+<div fxLayout="row" fxLayoutAlign="space-between">
+  <div fxFlex="18" class="chat-history">
+    <div class="header">SiliconExpert Chatbot</div>
+    
+     </div>
+    <div class="chat-container" fxFlex="80">
+        <div class="chat-messages">
+          <div *ngFor="let message of messages ; let i = index " >
+            <p class="chat-ask" *ngIf="i%2==0" >{{ message.text }}</p>
+            <p class="chat-res" *ngIf="i%2==1" >{{ message.text }}</p>
+          </div>
+        </div>
+        <div class="chat-input">
+          <input type="text" [(ngModel)]="userMessage" placeholder="Type your message" />
+          <button (click)="sendMessage()">Send</button>
+        </div>
+      </div>
+</div>
+  

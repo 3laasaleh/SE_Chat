@@ -6,12 +6,16 @@
     <div class="chat-container" fxFlex="80">
         <div class="chat-messages">
           <div *ngFor="let message of messages ; let i = index " >
-            <p class="chat-ask" *ngIf="i%2==0" >{{ message.text }}</p>
-            <p class="chat-res" *ngIf="i%2==1" >{{ message.text }}</p>
+            <ng-container *ngIf="i % 2 === 0">
+              <p class="chat-ask">{{ message.text }}</p>
+            </ng-container>
+            <ng-container *ngIf="i % 2 === 1">
+              <p class="chat-res" [innerHTML]="message.text.split(',').join('<br/>')"></p>
+            </ng-container>
           </div>
         </div>
         <div class="chat-input">
-          <input type="text" [(ngModel)]="userMessage" placeholder="Type your message" />
+          <input type="text" [(ngModel)]="userMessage" (keydown)="onKeyDown($event)" placeholder="Type your message" />
           <button (click)="sendMessage()">Send</button>
         </div>
       </div>

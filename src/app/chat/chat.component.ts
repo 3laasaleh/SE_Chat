@@ -14,6 +14,7 @@ interface ChatMessage {
 export class ChatComponent {
   public messages: ChatMessage[] = [];
   public userMessage: string = '';
+  public historyIndex: number = -1;
   apiUrl = 'http://localhost:5000/tapas';
   constructor(private http: HttpClient) { }
 
@@ -40,6 +41,43 @@ export class ChatComponent {
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter') {
       this.sendMessage();
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (this.historyIndex === -1) {
+        for (let i = this.messages.length - 1; i >= 0; i--) {
+          if (this.messages[i].sender === 'user') {
+            this.historyIndex = i;
+            break;
+          }
+        }
+      } else if (this.historyIndex > 0) {
+        for (let i = this.historyIndex - 1; i >= 0; i--) {
+          if (this.messages[i].sender === 'user') {
+            this.historyIndex = i;
+            break;
+          }
+        }
+      }
+      if (this.historyIndex >= 0) {
+        this.userMessage = this.messages[this.historyIndex].text;
+      }
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      if (this.historyIndex >= 0 && this.historyIndex < this.messages.length - 1) {
+        for (let i = this.historyIndex + 1; i < this.messages.length; i++) {
+          if (this.messages[i].sender === 'user') {
+            this.historyIndex = i;
+            break;
+          }
+        }
+        if (this.historyIndex >= 0) {
+          this.userMessage = this.messages[this.historyIndex].text;
+        }
+      } else if (this.historyIndex === this.messages.length - 1) {
+        this.historyIndex = -1;
+        this.userMessage = '';
+      }
     }
-  }  
+  }
+  
 }

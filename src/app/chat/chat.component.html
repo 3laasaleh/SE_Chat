@@ -4,16 +4,36 @@
 
   </div>
   <div class="chat-container" fxFlex="80">
-    <div class="chat-messages">
+    <div class="chat-messages" #chatMessages>
       <div *ngFor="let message of messages; let i = index">
         <ng-container *ngIf="i % 2 === 0">
           <p class="chat-ask">{{ message.text }}</p>
         </ng-container>
         <ng-container *ngIf="i % 2 === 1">
-          <p class="chat-res" [innerHTML]="message.text.split(',').join('<br/>')"></p>
+          <div class="chat-res">
+            <table>
+              <thead>
+                <tr>
+                  <th *ngFor="let col of message.columns; let j = index"
+                    [style.color]="j % 2 === 0 ? 'rgb(0 88 255)' : 'rgb(25 69 31)'">
+                    {{ col }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of message.rows; let k = index"
+                  [style.color]="k % 2 === 0 ? '#ffffff' : '#f9f9f9'">
+                  <td *ngFor="let value of row; let l = index" [style.color]="l % 2 === 0 ? 'rgb(0 88 255)' : 'rgb(25 69 31)'">
+                    {{ value }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </ng-container>
       </div>
     </div>
+
     <div class="chat-input">
       <input type="text" [(ngModel)]="userMessage" (keydown)="onKeyDown($event)" placeholder="Type your message" />
       <button (click)="sendMessage()">Send</button>

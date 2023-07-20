@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 interface ChatMessage {
   text: string;
+  rows: [];
+  columns: [];
   sender: string;
 }
 
@@ -15,27 +17,44 @@ export class ChatComponent {
   public messages: ChatMessage[] = [];
   public userMessage: string = '';
   public historyIndex: number = -1;
-  apiUrl = 'http://localhost:5000/tapas';
+  apiUrl = 'http://localhost:5000/api/qa';
+  @ViewChild('chatMessages') chatMessages!: ElementRef;
+
   constructor(private http: HttpClient) { }
 
   sendMessage() {
     const userText = this.userMessage.trim();
     console.log(userText);
     if (userText) {
-      this.messages.push({ text: userText, sender: 'user' });
+      this.userMessage = "";
+      this.scrollToBottom();
+      this.messages.push({ text: userText, sender: 'user', rows: [], columns: [] });
       // this.userMessage = '';
       // this.messages.push({ text: 'sorry can`t find answer', sender: 'bot' });
       // Send user message to Chat-bot API
-      this.http.post<any>(this.apiUrl, { user_input: userText })
+      this.http.post<any>(this.apiUrl, { model_name: "gpt", user_input: userText }, { withCredentials: false })
         .subscribe(response => {
           console.log(response);
-          const botText = response.bot_response == null ? 'sorry can`t find answer ' : response.bot_response.answer;
-          console.log(response.bot_response);
+          let botResponse = response.bot_response == null ? 'sorry can`t find answer ' : response.bot_response;
+          console.log("response.bot_response: ", response.bot_response);
 
-          this.messages.push({ text: botText, sender: 'bot' });
-          this.userMessage = "";
+          // //if botText is list convert it to comma separated string
+          // if (Array.isArray(botText)) {
+          //   botText = botText.join(', ');
+          //   console.log("botText: ", botText);
+          // }
+
+          this.messages.push({ text: botResponse, sender: 'bot', rows: botResponse[0], columns: botResponse[1] });
+          // Scroll the chat-messages div to the bottom after sending a message
+          this.scrollToBottom();
         });
     }
+  }
+
+  scrollToBottom() {
+    setTimeout(() => {
+      this.chatMessages.nativeElement.scrollTop = this.chatMessages.nativeElement.scrollHeight;
+    }, 0);
   }
 
   onKeyDown(event: KeyboardEvent) {
@@ -79,5 +98,12 @@ export class ChatComponent {
       }
     }
   }
-  
+
+  getBackgroundColor(colIndex: number) {
+    if(colIndex % 2 === 0)
+      return '#f2f2f2';
+    else
+      return '#2f78c9';
+  }
+
 }

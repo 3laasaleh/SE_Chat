@@ -6,28 +6,33 @@
   <div class="chat-container" fxFlex="80">
     <div class="chat-messages" #chatMessages>
       <div *ngFor="let message of messages; let i = index">
-        <ng-container *ngIf="i % 2 === 0">
+        <ng-container *ngIf=isEven(i)>
           <p class="chat-ask">{{ message.text }}</p>
         </ng-container>
-        <ng-container *ngIf="i % 2 === 1">
+        <ng-container *ngIf=!isEven(i)>
           <div class="chat-res">
-            <table>
-              <thead>
+            <table class="custom-table">
+              <ng-container *ngIf="message.rows && message.rows.length > 0; else noResults">
+                <thead>
+                  <tr>
+                    <th *ngFor="let col of message.columns let i = index" [ngClass]="{ 'even': isEven(i), 'odd': !isEven(i) }">
+                      {{ col }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of message.rows; let k = index" [ngClass]="{ 'even': isEven(k), 'odd': !isEven(k) }">
+                    <td *ngFor="let value of row; let l = index" [ngClass]="{ 'even': isEven(l), 'odd': !isEven(l) }">
+                      {{ value }}
+                    </td>
+                  </tr>
+                </tbody>
+              </ng-container>
+              <ng-template #noResults>
                 <tr>
-                  <th *ngFor="let col of message.columns; let j = index"
-                    [style.color]="j % 2 === 0 ? 'rgb(0 88 255)' : 'rgb(25 69 31)'">
-                    {{ col }}
-                  </th>
+                  <td colspan="2">No results found</td>
                 </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let row of message.rows; let k = index"
-                  [style.color]="k % 2 === 0 ? '#ffffff' : '#f9f9f9'">
-                  <td *ngFor="let value of row; let l = index" [style.color]="l % 2 === 0 ? 'rgb(0 88 255)' : 'rgb(25 69 31)'">
-                    {{ value }}
-                  </td>
-                </tr>
-              </tbody>
+              </ng-template>
             </table>
           </div>
         </ng-container>

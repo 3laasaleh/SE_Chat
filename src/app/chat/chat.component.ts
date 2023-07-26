@@ -1,5 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 interface ChatMessage {
   text: string;
@@ -29,24 +31,30 @@ export class ChatComponent {
       this.userMessage = "";
       this.scrollToBottom();
       this.messages.push({ text: userText, sender: 'user', rows: [], columns: [] });
-      // this.userMessage = '';
-      // this.messages.push({ text: 'sorry can`t find answer', sender: 'bot' });
+
       // Send user message to Chat-bot API
       this.http.post<any>(this.apiUrl, { model_name: "gpt", user_input: userText }, { withCredentials: false })
+        .pipe(
+          catchError(error => {
+            console.error('An error occurred while making the HTTP request:', error);
+            this.messages.push({ text: "No results found", sender: 'bot', rows: [], columns: [] });
+            return of(null); // Return a new observable with a null value to continue the subscription
+          })
+        )
         .subscribe(response => {
-          console.log(response);
-          let botResponse = response.bot_response == null ? 'sorry can`t find answer ' : response.bot_response;
-          console.log("response.bot_response: ", response.bot_response);
+          try {
+            if (response == null)
+              console.log('No bot response');
+            else {
+              let botResponse = response.bot_response;
+              this.messages.push({ text: "Success", sender: 'bot', rows: botResponse[0], columns: botResponse[1] });
+            }
 
-          // //if botText is list convert it to comma separated string
-          // if (Array.isArray(botText)) {
-          //   botText = botText.join(', ');
-          //   console.log("botText: ", botText);
-          // }
-
-          this.messages.push({ text: botResponse, sender: 'bot', rows: botResponse[0], columns: botResponse[1] });
-          // Scroll the chat-messages div to the bottom after sending a message
-          this.scrollToBottom();
+            this.scrollToBottom();
+          } catch (error) {
+            console.error("An error occurred while processing the response:", error);
+            this.messages.push({ text: "No results found", sender: 'bot', rows: [], columns: [] });
+          }
         });
     }
   }
@@ -100,10 +108,14 @@ export class ChatComponent {
   }
 
   getBackgroundColor(colIndex: number) {
-    if(colIndex % 2 === 0)
+    if (colIndex % 2 === 0)
       return '#f2f2f2';
     else
       return '#2f78c9';
+  }
+
+  isEven(index: number): boolean {
+    return index % 2 === 0;
   }
 
 }

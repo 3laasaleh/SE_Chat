@@ -20,11 +20,11 @@
 
 .chat-ask {
   margin-bottom: 10px;
-  background-color: #f2f2f2;
+  background-color: #aba7f3;
   padding: 5px 10px;
   border-radius: 5px;
   text-align: start;
-
+  font-weight: bold;
 }
 
 .chat-res {
@@ -70,10 +70,36 @@
   border-bottom: #f2f2f2 solid 1px;
 }
 
-.even {
-  background-color: lightgray;
+.custom-table {
+  border-collapse: collapse;
+  width: 100%;
 }
 
-.odd {
-  background-color: white;
+.custom-table th,
+.custom-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
 }
+
+.custom-table th.even {
+  background-color: #f39c12; /* Orange */
+  color: #fff;
+}
+
+.custom-table td.even {
+  background-color: #f5f5f5; /* Light Gray */
+}
+
+.custom-table th.odd {
+  background-color: #3498db; /* Blue */
+  color: #fff;
+}
+
+.custom-table td.odd {
+  background-color: #e0e0e0; /* Gray */
+}
+
+.custom-table .odd {
+  color: #c0392b; /* Red */
+}
+

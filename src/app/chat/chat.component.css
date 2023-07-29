@@ -11,7 +11,7 @@
 }
 
 .chat-messages {
-  height: 70vh;
+  height: 80vh;
   overflow-y: scroll;
   border: 1px solid #ccc;
   padding: 10px;
@@ -19,12 +19,9 @@
 }
 
 .chat-ask {
-  margin-bottom: 10px;
-  background-color: #aba7f3;
-  padding: 5px 10px;
-  border-radius: 5px;
-  text-align: start;
-  font-weight: bold;
+  flex: 1;
+  color: #333333; /* Dark gray color for the chat text */
+  font-size: 16px;
 }
 
 .chat-res {
@@ -82,24 +79,53 @@
 }
 
 .custom-table th.even {
-  background-color: #f39c12; /* Orange */
+  background-color: #f39c12;
+  /* Orange */
   color: #fff;
 }
 
 .custom-table td.even {
-  background-color: #f5f5f5; /* Light Gray */
+  background-color: #f5f5f5;
+  /* Light Gray */
 }
 
 .custom-table th.odd {
-  background-color: #3498db; /* Blue */
+  background-color: #3498db;
+  /* Blue */
   color: #fff;
 }
 
 .custom-table td.odd {
-  background-color: #e0e0e0; /* Gray */
+  background-color: #e0e0e0;
+  /* Gray */
 }
 
 .custom-table .odd {
-  color: #c0392b; /* Red */
+  color: #c0392b;
+  /* Red */
 }
 
+/* Add your desired styles for the notification icon and chat message container */
+.chat-message-container {
+  position: relative;
+}
+
+.message-wrapper {
+  position: relative;
+  padding: 10px;
+  background-color: #f5f5f5; /* Light gray background for the message wrapper */
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.notification-icon {
+  font-size: 24px;
+  cursor: pointer;
+  color: #4285f4; /* Google blue color for the notification icon */
+}
+
+.notification-icon.hidden {
+  display: none;
+}

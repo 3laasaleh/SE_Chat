@@ -6,8 +6,12 @@
   <div class="chat-container" fxFlex="80">
     <div class="chat-messages" #chatMessages>
       <div *ngFor="let message of messages; let i = index">
-        <ng-container *ngIf=isEven(i)>
-          <p class="chat-ask">{{ message.text }}</p>
+        <ng-container *ngIf="isEven(i)">
+          <div class="message-wrapper">
+            <p class="chat-ask">{{ message.text }}</p>
+            <span class="notification-icon" [class.hidden]="!notificationVisible"
+              (click)="showPopUp(message.sqlQuery)">🔔</span>
+          </div>
         </ng-container>
         <ng-container *ngIf=!isEven(i)>
           <div class="chat-res">
@@ -15,13 +19,15 @@
               <ng-container *ngIf="message.rows && message.rows.length > 0; else noResults">
                 <thead>
                   <tr>
-                    <th *ngFor="let col of message.columns let i = index" [ngClass]="{ 'even': isEven(i), 'odd': !isEven(i) }">
+                    <th *ngFor="let col of message.columns let i = index"
+                      [ngClass]="{ 'even': isEven(i), 'odd': !isEven(i) }">
                       {{ col }}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let row of message.rows; let k = index" [ngClass]="{ 'even': isEven(k), 'odd': !isEven(k) }">
+                  <tr *ngFor="let row of message.rows; let k = index"
+                    [ngClass]="{ 'even': isEven(k), 'odd': !isEven(k) }">
                     <td *ngFor="let value of row; let l = index" [ngClass]="{ 'even': isEven(l), 'odd': !isEven(l) }">
                       {{ value }}
                     </td>

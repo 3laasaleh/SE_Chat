@@ -2,12 +2,16 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { NotificationPopupComponent } from '../notification-popup/notification-popup.component';
+
 
 interface ChatMessage {
   text: string;
   rows: [];
   columns: [];
   sender: string;
+  sqlQuery: string;
 }
 
 @Component({
@@ -21,8 +25,9 @@ export class ChatComponent {
   public historyIndex: number = -1;
   apiUrl = 'http://localhost:5000/api/qa';
   @ViewChild('chatMessages') chatMessages!: ElementRef;
+  notificationVisible: boolean = false; // Set this variable based on your conditions
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private dialog: MatDialog) { }
 
   sendMessage() {
     const userText = this.userMessage.trim();
@@ -30,14 +35,14 @@ export class ChatComponent {
     if (userText) {
       this.userMessage = "";
       this.scrollToBottom();
-      this.messages.push({ text: userText, sender: 'user', rows: [], columns: [] });
+      this.messages.push({ text: userText, sender: 'user', rows: [], columns: [], sqlQuery: '' });
 
       // Send user message to Chat-bot API
       this.http.post<any>(this.apiUrl, { model_name: "gpt", user_input: userText }, { withCredentials: false })
         .pipe(
           catchError(error => {
             console.error('An error occurred while making the HTTP request:', error);
-            this.messages.push({ text: "No results found", sender: 'bot', rows: [], columns: [] });
+            this.messages.push({ text: "No results found", sender: 'bot', rows: [], columns: [], sqlQuery: '' });
             return of(null); // Return a new observable with a null value to continue the subscription
           })
         )
@@ -47,13 +52,15 @@ export class ChatComponent {
               console.log('No bot response');
             else {
               let botResponse = response.bot_response;
-              this.messages.push({ text: "Success", sender: 'bot', rows: botResponse[0], columns: botResponse[1] });
+              this.messages[this.messages.length - 1].sqlQuery = botResponse[2];
+              this.messages.push({ text: "Success", sender: 'bot', rows: botResponse[0], columns: botResponse[1], sqlQuery: '' });
             }
 
             this.scrollToBottom();
+            this.notificationVisible = true;
           } catch (error) {
             console.error("An error occurred while processing the response:", error);
-            this.messages.push({ text: "No results found", sender: 'bot', rows: [], columns: [] });
+            this.messages.push({ text: "No results found", sender: 'bot', rows: [], columns: [], sqlQuery: '' });
           }
         });
     }
@@ -118,4 +125,10 @@ export class ChatComponent {
     return index % 2 === 0;
   }
 
+  showPopUp(message: string) {
+    const dialogRef = this.dialog.open(NotificationPopupComponent, {
+      data: { message },
+      width: '500px' // You can adjust the width to fit your needs
+    });
+  }
 }

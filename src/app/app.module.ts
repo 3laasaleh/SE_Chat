@@ -7,18 +7,27 @@ import { ChatComponent } from './chat/chat.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { NotificationPopupComponent } from './notification-popup/notification-popup.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon'; // Import MatIconModule
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Import the MatDialogModule
 
 @NgModule({
   declarations: [
     AppComponent,
-    ChatComponent
+    ChatComponent,
+    NotificationPopupComponent
   ],
   imports: [
     FormsModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FlexLayoutModule 
+    FlexLayoutModule,
+    BrowserAnimationsModule,
+    MatDialogModule,
+    MatIconModule 
   ],
   providers: [],
   bootstrap: [AppComponent]

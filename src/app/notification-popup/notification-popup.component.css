@@ -1,43 +1,72 @@
 /* notification-popup.component.css */
 .popup-container {
-    padding: 20px;
-    background-color: #ffffff;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    width: 92%;
-    display: flex;
-    flex-direction: column;
-    font-family: "Courier New", monospace; /* Use a monospaced font for SQL code */
-  }
-  
-  .popup-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  
-  .popup-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #4caf50; /* Green for SQL keywords */
-  }
-  
-  .message-content {
-    flex: 1;
-    color: #f3f3f3; /* Light gray for SQL text */
-    background-color: #333333; /* Dark background color for SQL code */
-    padding: 10px;
-    border-radius: 5px;
-    white-space: pre-wrap; /* Preserve line breaks */
-  }
-  
-  button[mat-icon-button] {
-    background-color: transparent;
-  }
-  
-  mat-icon {
-    font-size: 24px;
-    color: #777777; /* Use your preferred color for the icon */
-  }
-  
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 92%;
+  font-family: "Courier New", monospace; /* Use a monospaced font for SQL code */
+  position: relative;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.popup-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4caf50; /* Green for SQL keywords */
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+}
+
+.copy-button, .close-button {
+  background-color: transparent;
+  color: #777777; /* Gray color for the button icons */
+  border: none;
+  cursor: pointer;
+  outline: none;
+  font-size: 24px;
+  transition: color 0.3s;
+}
+
+.copy-button:hover, .close-button:hover {
+  color: #444444; /* Slightly darker gray on hover */
+}
+
+.copy-button {
+  margin-right: 10px;
+}
+
+.message-content {
+  flex: 1;
+  color: #f3f3f3; /* Light gray for SQL text */
+  background-color: #333333; /* Dark background color for SQL code */
+  padding: 10px;
+  border-radius: 5px;
+  white-space: pre-wrap; /* Preserve line breaks */
+}
+
+mat-icon {
+  font-size: 24px;
+}
+
+.copy-feedback {
+  list-style: none;
+  padding-left: 20px; /* Adjust the padding as needed */
+  position: relative;
+}
+
+.copy-feedback::before {
+  content: '\2713'; /* Checkmark Unicode character */
+  position: absolute;
+  left: 0;
+}
+

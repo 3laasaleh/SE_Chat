@@ -9,8 +9,9 @@
         <ng-container *ngIf="isEven(i)">
           <div class="message-wrapper">
             <p class="chat-ask">{{ message.text }}</p>
-            <span class="notification-icon" [class.hidden]="!notificationVisible"
-              (click)="showPopUp(message.sqlQuery)">🔔</span>
+            <span class="lang-text" [class.hidden]="!notificationVisible && !message.isOld">{{ message.lang }}</span>
+            <span class="notification-icon" [class.hidden]="!notificationVisible && !message.isOld"
+              (click)="showPopUp(message.sqlQuery, message.elasticQuery)">🔔</span>
           </div>
         </ng-container>
         <ng-container *ngIf=!isEven(i)>

@@ -129,3 +129,12 @@
 .notification-icon.hidden {
   display: none;
 }
+
+.lang-text {
+  padding: 3px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  margin-left: 10px;
+}

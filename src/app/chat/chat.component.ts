@@ -11,7 +11,10 @@ interface ChatMessage {
   rows: [];
   columns: [];
   sender: string;
+  isOld: boolean;
+  lang: string;
   sqlQuery: string;
+  elasticQuery: string;
 }
 
 @Component({
@@ -31,18 +34,19 @@ export class ChatComponent {
 
   sendMessage() {
     const userText = this.userMessage.trim();
+    this.notificationVisible = false;
     console.log(userText);
     if (userText) {
       this.userMessage = "";
       this.scrollToBottom();
-      this.messages.push({ text: userText, sender: 'user', rows: [], columns: [], sqlQuery: '' });
+      this.messages.push({ text: userText, sender: 'user', isOld: false, lang: '', rows: [], columns: [], sqlQuery: '', elasticQuery: '' });
 
       // Send user message to Chat-bot API
-      this.http.post<any>(this.apiUrl, { model_name: "gpt", user_input: userText }, { withCredentials: false })
+      this.http.post<any>(this.apiUrl, { model_name: "gpt_elastic", user_input: userText }, { withCredentials: false })
         .pipe(
           catchError(error => {
             console.error('An error occurred while making the HTTP request:', error);
-            this.messages.push({ text: "No results found", sender: 'bot', rows: [], columns: [], sqlQuery: '' });
+            this.messages.push({ text: "No results found", sender: 'bot', isOld: true, lang: '', rows: [], columns: [], sqlQuery: '', elasticQuery: '' });
             return of(null); // Return a new observable with a null value to continue the subscription
           })
         )
@@ -52,15 +56,18 @@ export class ChatComponent {
               console.log('No bot response');
             else {
               let botResponse = response.bot_response;
-              this.messages[this.messages.length - 1].sqlQuery = botResponse[2];
-              this.messages.push({ text: "Success", sender: 'bot', rows: botResponse[0], columns: botResponse[1], sqlQuery: '' });
+              this.messages[this.messages.length - 1].isOld = true;
+              this.messages[this.messages.length - 1].lang = botResponse[2];
+              this.messages[this.messages.length - 1].sqlQuery = botResponse[3];
+              this.messages[this.messages.length - 1].elasticQuery = botResponse[4];
+              this.messages.push({ text: "Success", sender: 'bot', isOld: true, lang: botResponse[2], rows: botResponse[0], columns: botResponse[1], sqlQuery: '', elasticQuery: '' });
             }
 
             this.scrollToBottom();
             this.notificationVisible = true;
           } catch (error) {
             console.error("An error occurred while processing the response:", error);
-            this.messages.push({ text: "No results found", sender: 'bot', rows: [], columns: [], sqlQuery: '' });
+            this.messages.push({ text: "No results found", sender: 'bot', isOld: true, lang: '', rows: [], columns: [], sqlQuery: '', elasticQuery: '' });
           }
         });
     }
@@ -125,7 +132,9 @@ export class ChatComponent {
     return index % 2 === 0;
   }
 
-  showPopUp(message: string) {
+  showPopUp(sqlQuery: string, elastic_query: string) {
+    //Append sqlQuery and elastic_query to message in seperate lines
+    let message = sqlQuery + '\n' + elastic_query;
     const dialogRef = this.dialog.open(NotificationPopupComponent, {
       data: { message },
       width: '500px' // You can adjust the width to fit your needs
